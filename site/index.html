@@ -97,27 +97,7 @@
       </div>
     </div>
 
-    <script type="module">
-        import init, { escape } from '/pkg/pedido.js';
-
-        async function run() {
-            // Inicializa o WebAssembly
-            await init();
-
-            const btnNao = document.getElementById('btn-nao');
-
-            btnNao.addEventListener('mouseover', () => {
-                const largura = window.innerWidth;
-                const altura = window.innerHeight;
-
-                const novasCoords = escape(largura, altura);
-
-                btnNao.style.position = 'fixed'; // Muda para fixed para andar pelo ecrã todo
-                btnNao.style.left = `${novasCoords.x}px`;
-                btnNao.style.top = `${novasCoords.y}px`;
-            });
-        }
-
+    <script>
         // Colocamos esta função no escopo global para o botão conseguir chamá-la
         window.celebrate = function() {
             document.querySelector('h1').style.display = 'none';
@@ -148,6 +128,28 @@
                 }
             }());
         };
+    </script>
+
+    <script type="module">
+        import init, { escape } from './pkg/pedido.js';
+
+        async function run() {
+            // Inicializa o WebAssembly
+            await init();
+
+            const btnNao = document.getElementById('btn-nao');
+
+            btnNao.addEventListener('mouseover', () => {
+                const largura = window.innerWidth;
+                const altura = window.innerHeight;
+
+                const novasCoords = escape(largura, altura);
+
+                btnNao.style.position = 'fixed'; // Muda para fixed para andar pelo ecrã todo
+                btnNao.style.left = `${novasCoords.x}px`;
+                btnNao.style.top = `${novasCoords.y}px`;
+            });
+        }
 
         run();
     </script>
