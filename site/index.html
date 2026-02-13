@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Pedido Especial</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #ffe6e6;
+            font-family: Arial, sans-serif;
+            overflow: hidden; /* Impede que crie scrollbars */
+            margin: 0;
+        }
+        h1 { color: #d63031; }
+
+        .botoes {
+            position: relative;
+            width: 320px; /* Largura fixa para caberem os dois botões */
+            height: 50px;
+            margin: 20px auto; /* O 'auto' centra a caixa perfeitamente no ecrã */
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+        }
+        #btn-sim {
+            background-color: #27ae60;
+        }
+
+        #btn-nao {
+            background-color: #c0392b;
+            /* Bónus: Adiciona uma transição para o botão deslizar suavemente quando foge! */
+            transition: top 0.2s ease, left 0.2s ease;
+        }
+
+        #modal-piroso {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.7); /* Fundo escurecido */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        #modal-piroso.visivel {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .cartao {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.3);
+            transform: scale(0.5);
+            transition: transform 0.5s ease;
+        }
+
+        #modal-piroso.visivel .cartao {
+            transform: scale(1); /* Faz o cartão saltar para o tamanho normal */
+        }
+
+        .cartao h2 { color: #d63031; margin-top: 0; }
+        .cartao img { border-radius: 10px; margin: 15px 0; }
+        .cartao p { font-size: 20px; color: #333; font-weight: bold; margin-bottom: 0; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+
+    <h1>Queres ser o meu Valentim? 💘</h1>
+
+    <div class="botoes">
+        <button id="btn-sim" onclick="celebrate()">Sim!</button>
+        <button id="btn-nao">Nem pensar</button>
+    </div>
+
+    <div id="modal-piroso">
+      <div class="cartao">
+          <h2>Sabia que não ias resistir! 🥰</h2>
+          <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="Abraço fofo" width="250">
+          <p>Amo-te muito! 😍😍😍😍😍 </p>
+      </div>
+    </div>
+
+    <script type="module">
+        import init, { escape } from './pkg/escaping_button.js';
+
+        async function run() {
+            // Inicializa o WebAssembly
+            await init();
+
+            const btnNao = document.getElementById('btn-nao');
+
+            btnNao.addEventListener('mouseover', () => {
+                const largura = window.innerWidth;
+                const altura = window.innerHeight;
+
+                const novasCoords = escape(largura, altura);
+
+                btnNao.style.position = 'fixed'; // Muda para fixed para andar pelo ecrã todo
+                btnNao.style.left = `${novasCoords.x}px`;
+                btnNao.style.top = `${novasCoords.y}px`;
+            });
+        }
+
+        // Colocamos esta função no escopo global para o botão conseguir chamá-la
+        window.celebrate = function() {
+            document.querySelector('h1').style.display = 'none';
+            document.querySelector('.botoes').style.display = 'none';
+
+            document.getElementById('modal-piroso').classList.add('visivel');
+
+            const duration = 5 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                // left
+                confetti({
+                    particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
+                    colors: ['#ff0000', '#ff69b4', '#ffffff'],
+                    zIndex: 2000
+                });
+                // right
+                confetti({
+                    particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
+                    colors: ['#ff0000', '#ff69b4', '#ffffff'],
+                    zIndex: 2000
+                });
+
+                // Continua a disparar até o tempo acabar
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        };
+
+        run();
+    </script>
+</body>
+</html>
